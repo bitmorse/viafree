@@ -2,6 +2,7 @@ import requests
 import datetime
 import streamlit as st
 import pytz
+from streamlit_autorefresh import st_autorefresh
 
 # Function to fetch multiple connections between two points
 def fetch_connections(from_station, to_station, departure_time, num_connections=3):
@@ -62,6 +63,15 @@ def format_connections_for_table(leg1_connections, leg2_connection):
         })
     return data
 
+count = st_autorefresh(interval=1000*30*60, limit=100, key="viafree")
+
+st.markdown("""
+<style>
+.big-font {
+    font-size:30px !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # Initialize session state variables if they don't exist
 if 'loaded_connections' not in st.session_state:
@@ -133,16 +143,16 @@ if leg1_connections:
             col1, col2, col3 = st.columns([3, 0.5, 3])
             with col1:
                 st.caption(f"{vehicle1} {leg1['line']} to {terminal1} {track1}")
-                st.markdown(f"**{departure1_time}** {st.session_state['leg1_from']} ")
-                st.markdown(f"**{arrival1_time}** {st.session_state['leg1_to']}")
+                st.markdown(f'<span class="big-font">{departure1_time}</span><br>{st.session_state['leg1_from']} ',unsafe_allow_html=True)
+                st.markdown(f'<span class="big-font">{arrival1_time}</span><br>{st.session_state['leg1_to']} ',unsafe_allow_html=True)
                 
             with col2:
                 st.markdown("→")
                 
             with col3:
                 st.caption(f"{vehicle2} {leg2['line']} to {terminal2} {track2}")
-                st.markdown(f"**{departure2_time}** {st.session_state['leg2_from']} ")
-                st.markdown(f"**{arrival2_time}** {st.session_state['leg2_to']}")
+                st.markdown(f'<span class="big-font">{departure2_time}</span><br>{st.session_state['leg2_from']} ',unsafe_allow_html=True)
+                st.markdown(f'<span class="big-font">{arrival2_time}</span><br>{st.session_state['leg2_to']} ',unsafe_allow_html=True)
 else:
     st.error("Unable to fetch connections. Please check your inputs and try again.")
 
