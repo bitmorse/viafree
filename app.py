@@ -98,7 +98,7 @@ def reverse_journey():
     st.session_state['leg1_to'], st.session_state['leg2_from'] = st.session_state['leg2_from'], st.session_state['leg1_to']
 
 #use CET timezone
-now = datetime.datetime.now(datetime.UTC)
+now = datetime.datetime.now(datetime.timezone.utc)
 cet = pytz.timezone('CET')
 now = now.astimezone(cet)
 
