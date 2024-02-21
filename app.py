@@ -1,5 +1,5 @@
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import streamlit as st
 
 # Function to fetch multiple connections between two points
@@ -96,8 +96,8 @@ def reverse_journey():
     st.session_state['leg1_from'], st.session_state['leg2_to'] = st.session_state['leg2_to'], st.session_state['leg1_from']
     st.session_state['leg1_to'], st.session_state['leg2_from'] = st.session_state['leg2_from'], st.session_state['leg1_to']
 
-# Initial departure time (now or specified)
-now = datetime.now()
+#use CET timezone
+now = datetime.now(tz=timezone('CET'))
 
 
 # Fetch initial connections
