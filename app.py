@@ -1,6 +1,7 @@
 import requests
-from datetime import datetime, timedelta, timezone
+import datetime
 import streamlit as st
+import pytz
 
 # Function to fetch multiple connections between two points
 def fetch_connections(from_station, to_station, departure_time, num_connections=3):
@@ -22,8 +23,8 @@ def fetch_connections(from_station, to_station, departure_time, num_connections=
 
 # Function to calculate the adjusted time after walking
 def calculate_adjusted_time(arrival_time_str, duration_minutes=10):
-    arrival_time = datetime.strptime(arrival_time_str, '%Y-%m-%d %H:%M:%S')
-    adjusted_time = arrival_time + timedelta(minutes=duration_minutes)
+    arrival_time = datetime.datetime.strptime(arrival_time_str, '%Y-%m-%d %H:%M:%S')
+    adjusted_time = arrival_time + datetime.timedelta(minutes=duration_minutes)
     return adjusted_time
 
 # Function to format connections into a table-friendly format
@@ -97,8 +98,9 @@ def reverse_journey():
     st.session_state['leg1_to'], st.session_state['leg2_from'] = st.session_state['leg2_from'], st.session_state['leg1_to']
 
 #use CET timezone
-now = datetime.now(tz=timezone('CET'))
-
+now = datetime.datetime.now(datetime.UTC)
+cet = pytz.timezone('CET')
+now = now.astimezone(cet)
 
 # Fetch initial connections
 leg1_connections = fetch_connections(st.session_state['leg1_from'], st.session_state['leg1_to'], now, num_connections=st.session_state.loaded_connections)
@@ -121,10 +123,10 @@ if leg1_connections:
         terminal2 = leg2['terminal']
         
         # Format times to HH:mm
-        arrival1_time = datetime.strptime(arrival1, '%Y-%m-%d %H:%M:%S').strftime('%H:%M')
-        departure1_time = datetime.strptime(leg1['departure'], '%Y-%m-%d %H:%M:%S').strftime('%H:%M')
-        arrival2_time = datetime.strptime(arrival2, '%Y-%m-%d %H:%M:%S').strftime('%H:%M')
-        departure2_time = datetime.strptime(leg2['departure'], '%Y-%m-%d %H:%M:%S').strftime('%H:%M')
+        arrival1_time = datetime.datetime.strptime(arrival1, '%Y-%m-%d %H:%M:%S').strftime('%H:%M')
+        departure1_time = datetime.datetime.strptime(leg1['departure'], '%Y-%m-%d %H:%M:%S').strftime('%H:%M')
+        arrival2_time = datetime.datetime.strptime(arrival2, '%Y-%m-%d %H:%M:%S').strftime('%H:%M')
+        departure2_time = datetime.datetime.strptime(leg2['departure'], '%Y-%m-%d %H:%M:%S').strftime('%H:%M')
 
         # Use st.expander to group each connection's details
         with st.expander(f"Connection {idx}", expanded=True):
